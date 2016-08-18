@@ -50,6 +50,10 @@ namespace dst {
             return const_iterator(nullptr);
         }
 
+        bool contains(const value_type &value) {
+            return _node_contains(root, value);
+        }
+
     private:
         template<class RandomAccessIterator>
         void _build_node(node_type *&node, RandomAccessIterator begin, RandomAccessIterator end,
@@ -71,6 +75,15 @@ namespace dst {
                 _delete_node(node->right);
             }
             delete node;
+        }
+
+        bool _node_contains(node_type *node, const value_type &value) {
+            if (node == nullptr) {
+                return false;
+            }
+            return node->value == value ||
+                   _node_contains(node->left, value) ||
+                   _node_contains(node->right, value);
         }
 
         node_type *root;

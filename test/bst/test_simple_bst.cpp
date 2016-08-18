@@ -19,3 +19,8 @@ TEST_CASE("SimpleBST iteration") {
     REQUIRE(iteration == expected);
 }
 
+TEST_CASE("SimpleBST contains") {
+    SimpleBST<int> bst = {1, 4, -2};
+    REQUIRE(bst.contains(1));
+    REQUIRE(!bst.contains(2));
+}
