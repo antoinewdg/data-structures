@@ -44,3 +44,13 @@ TEST_CASE("SimpleBST insertion") {
     bst.insert(-4);
     REQUIRE(bst == SimpleBST<int>({-4, 1}));
 }
+
+TEST_CASE("SimpleBST size") {
+    SimpleBST<int> a = {}, b = {1, 2, 3}, c = {1, 1, 1, 4, 7, -8};
+    REQUIRE(a.size() == 0);
+    REQUIRE(b.size() == 3);
+    REQUIRE(c.size() == 6);
+
+    a.insert(8);
+    REQUIRE(a.size() == 1);
+}

@@ -23,7 +23,7 @@ namespace dst {
         typedef SimpleBSTNode<T> node_type;
         typedef SimpleBSTConstIterator<T> const_iterator;
 
-        SimpleBST() : m_root(nullptr) {}
+        SimpleBST() : m_root(nullptr), m_size(0) {}
 
         SimpleBST(const std::initializer_list<T> &values) : SimpleBST(std::vector<T>(values)) {}
 
@@ -36,7 +36,7 @@ namespace dst {
         template<class RandomAccessIterator>
         SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): SimpleBST() {
             std::sort(begin, end);
-            _build_node(m_root, begin, end);
+            _build_node(m_root, begin, end, m_size);
         }
 
 
@@ -56,7 +56,12 @@ namespace dst {
         }
 
         void insert(const value_type &value) {
+            m_size++;
             _insert_to_node(m_root, value);
+        }
+
+        size_t const size() {
+            return m_size;
         }
 
         bool operator==(const std::initializer_list<T> &l) {
@@ -78,14 +83,15 @@ namespace dst {
     private:
         template<class RandomAccessIterator>
         void _build_node(node_type *&node, RandomAccessIterator begin, RandomAccessIterator end,
-                         node_type *parent = nullptr) {
+                         size_t &size, node_type *parent = nullptr) {
             if (begin == end) {
                 return;
             }
             RandomAccessIterator mid = begin + std::distance(begin, end) / 2;
             node = new node_type(*mid, parent);
-            _build_node(node->left, begin, mid, node);
-            _build_node(node->right, mid + 1, end, node);
+            size++;
+            _build_node(node->left, begin, mid, size, node);
+            _build_node(node->right, mid + 1, end, size, node);
 
         }
 
@@ -121,6 +127,7 @@ namespace dst {
         }
 
         node_type *m_root;
+        size_t m_size;
 
 
     };
