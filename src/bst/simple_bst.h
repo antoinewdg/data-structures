@@ -19,39 +19,60 @@ namespace dst {
     class SimpleBST {
     public:
         typedef T value_type;
+        typedef SimpleBST<T> self_type;
         typedef SimpleBSTNode<T> node_type;
         typedef SimpleBSTConstIterator<T> const_iterator;
 
-        SimpleBST(const std::initializer_list<T> &values) : SimpleBST(std::vector<T>(values)) {
-        }
+        SimpleBST() : root(nullptr) {}
 
-        SimpleBST(std::vector<T> values) : SimpleBST(values.begin(), values.end()) {
-        }
+        SimpleBST(const std::initializer_list<T> &values) : SimpleBST(std::vector<T>(values)) {}
+
+        SimpleBST(std::vector<T> values) : SimpleBST(values.begin(), values.end()) {}
 
         ~SimpleBST() {
             _delete_node(root);
         }
 
         template<class RandomAccessIterator>
-        SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): root(nullptr) {
+        SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): SimpleBST() {
             std::sort(begin, end);
             _build_node(root, begin, end);
         }
 
 
-        const_iterator begin() {
+        const_iterator begin() const {
             if (root == nullptr) {
                 return end();
             }
             return const_iterator(const_iterator::get_leftmost_child(root));
         }
 
-        const_iterator end() {
+        const_iterator end() const {
             return const_iterator(nullptr);
         }
 
         bool contains(const value_type &value) {
             return _node_contains(root, value);
+        }
+
+        void insert(const value_type &value) {
+            _insert_to_node(root, value);
+        }
+
+        bool operator==(const std::initializer_list<T> &l) {
+            return std::equal(l.begin(), l.end(), begin(), end());
+        }
+
+        bool operator!=(const std::initializer_list<T> &l) {
+            return !(*this == l);
+        }
+
+        bool operator==(const self_type &other) {
+            return std::equal(begin(), end(), other.begin(), other.end());
+        }
+
+        bool operator!=(const self_type &other) {
+            return !(*this == other);
         }
 
     private:
@@ -84,6 +105,19 @@ namespace dst {
             return node->value == value ||
                    _node_contains(node->left, value) ||
                    _node_contains(node->right, value);
+        }
+
+        void _insert_to_node(node_type *&node, const value_type &value, node_type *parent = nullptr) {
+            if (node == nullptr) {
+                node = new node_type(value, parent);
+                return;
+            }
+            if (value <= node->value) {
+                _insert_to_node(node->left, value, node);
+            } else {
+                _insert_to_node(node->right, value, node);
+            }
+
         }
 
         node_type *root;
