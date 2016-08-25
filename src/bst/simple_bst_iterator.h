@@ -17,9 +17,9 @@ namespace dst {
     public:
         typedef SimpleBSTNode <T> node_type;
 
-        SimpleBSTConstIterator() : node(nullptr) {}
+        SimpleBSTConstIterator() : m_node(nullptr) {}
 
-        explicit SimpleBSTConstIterator(node_type *node) : node(node) {}
+        explicit SimpleBSTConstIterator(node_type *node) : m_node(node) {}
 
         static node_type *get_leftmost_child(node_type *node) {
             while (node->left != nullptr) { node = node->left; }
@@ -30,12 +30,12 @@ namespace dst {
         friend class boost::iterator_core_access;
 
         void increment() {
-            if (node->right != nullptr) {
-                node = get_leftmost_child(node->right);
+            if (m_node->right != nullptr) {
+                m_node = get_leftmost_child(m_node->right);
                 return;
             }
 
-            node = _get_first_parent_from_left(node);
+            m_node = _get_first_parent_from_left(m_node);
 
 
         }
@@ -50,12 +50,12 @@ namespace dst {
         }
 
         bool equal(SimpleBSTConstIterator const &other) const {
-            return node == other.node;
+            return m_node == other.m_node;
         }
 
-        T const &dereference() const { return node->value; }
+        T const &dereference() const { return m_node->value; }
 
-        node_type *node;
+        node_type *m_node;
     };
 }
 

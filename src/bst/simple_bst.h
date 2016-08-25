@@ -23,28 +23,28 @@ namespace dst {
         typedef SimpleBSTNode<T> node_type;
         typedef SimpleBSTConstIterator<T> const_iterator;
 
-        SimpleBST() : root(nullptr) {}
+        SimpleBST() : m_root(nullptr) {}
 
         SimpleBST(const std::initializer_list<T> &values) : SimpleBST(std::vector<T>(values)) {}
 
         SimpleBST(std::vector<T> values) : SimpleBST(values.begin(), values.end()) {}
 
         ~SimpleBST() {
-            _delete_node(root);
+            _delete_node(m_root);
         }
 
         template<class RandomAccessIterator>
         SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): SimpleBST() {
             std::sort(begin, end);
-            _build_node(root, begin, end);
+            _build_node(m_root, begin, end);
         }
 
 
         const_iterator begin() const {
-            if (root == nullptr) {
+            if (m_root == nullptr) {
                 return end();
             }
-            return const_iterator(const_iterator::get_leftmost_child(root));
+            return const_iterator(const_iterator::get_leftmost_child(m_root));
         }
 
         const_iterator end() const {
@@ -52,11 +52,11 @@ namespace dst {
         }
 
         bool contains(const value_type &value) {
-            return _node_contains(root, value);
+            return _node_contains(m_root, value);
         }
 
         void insert(const value_type &value) {
-            _insert_to_node(root, value);
+            _insert_to_node(m_root, value);
         }
 
         bool operator==(const std::initializer_list<T> &l) {
@@ -120,7 +120,7 @@ namespace dst {
 
         }
 
-        node_type *root;
+        node_type *m_root;
 
 
     };
