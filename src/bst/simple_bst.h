@@ -49,7 +49,7 @@ namespace dst {
         }
 
         bool contains(const value_type &value) {
-            return _node_contains(m_root, value);
+            return _find_node_with_value(m_root, value) != nullptr;
         }
 
         void insert(const value_type &value) {
@@ -79,7 +79,7 @@ namespace dst {
 
     private:
         template<class RandomAccessIterator>
-        void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
+        static void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
                          size_t &size, node_ptr_type parent = nullptr) {
             if (begin == end) {
                 return;
@@ -92,19 +92,7 @@ namespace dst {
 
         }
 
-
-
-
-        bool _node_contains(node_ptr_type node, const value_type &value) {
-            if (node == nullptr) {
-                return false;
-            }
-            return node->value == value ||
-                   _node_contains(node->left, value) ||
-                   _node_contains(node->right, value);
-        }
-
-        void _insert_to_node(node_ptr_type &node, const value_type &value, node_ptr_type parent = nullptr) {
+        static void _insert_to_node(node_ptr_type &node, const value_type &value, node_ptr_type parent = nullptr) {
             if (node == nullptr) {
                 node = std::make_shared<node_type>(value, parent);
                 return;
@@ -115,6 +103,18 @@ namespace dst {
                 _insert_to_node(node->right, value, node);
             }
 
+        }
+
+        static node_ptr_type _find_node_with_value(node_ptr_type node, const value_type &value) {
+            if (node == nullptr) {
+                return nullptr;
+            }
+            if (node->value > value) {
+                return _find_node_with_value(node->left, value);
+            } else if (node->value < value) {
+                return _find_node_with_value(node->right, value);
+            }
+            return node;
         }
 
         node_ptr_type m_root;
