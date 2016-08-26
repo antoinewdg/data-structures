@@ -29,6 +29,18 @@ TEST_CASE("SimpleBST iteration") {
     std::copy(bst.begin(), bst.end(), iteration.begin());
 
     REQUIRE(iteration == expected);
+
+    bst = {};
+    iteration.resize(0);
+    std::copy(bst.begin(), bst.end(), iteration.begin());
+
+    REQUIRE(iteration == std::vector<int>());
+
+    bst = {1};
+    iteration.resize(1);
+    std::copy(bst.begin(), bst.end(), iteration.begin());
+
+    REQUIRE(iteration == std::vector<int>({1}));
 }
 
 TEST_CASE("SimpleBST contains") {
