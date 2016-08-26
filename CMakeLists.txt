@@ -17,5 +17,5 @@ set(TEST_FILES
 include_directories(src)
 include_directories(lib)
 
-add_executable(data_structures ${SOURCE_FILES})
+#add_executable(data_structures ${SOURCE_FILES})
 add_executable(run_tests ${SOURCE_FILES} ${TEST_FILES})
