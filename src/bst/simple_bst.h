@@ -21,6 +21,7 @@ namespace dst {
         typedef T value_type;
         typedef SimpleBST<T> self_type;
         typedef SimpleBSTNode<T> node_type;
+        typedef typename node_type::ptr_type node_ptr_type;
         typedef SimpleBSTConstIterator<T> const_iterator;
 
         SimpleBST() : m_root(nullptr), m_size(0) {}
@@ -28,10 +29,6 @@ namespace dst {
         SimpleBST(const std::initializer_list<T> &values) : SimpleBST(std::vector<T>(values)) {}
 
         SimpleBST(std::vector<T> values) : SimpleBST(values.begin(), values.end()) {}
-
-        ~SimpleBST() {
-            _delete_node(m_root);
-        }
 
         template<class RandomAccessIterator>
         SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): SimpleBST() {
@@ -82,13 +79,13 @@ namespace dst {
 
     private:
         template<class RandomAccessIterator>
-        void _build_node(node_type *&node, RandomAccessIterator begin, RandomAccessIterator end,
-                         size_t &size, node_type *parent = nullptr) {
+        void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
+                         size_t &size, node_ptr_type parent = nullptr) {
             if (begin == end) {
                 return;
             }
             RandomAccessIterator mid = begin + std::distance(begin, end) / 2;
-            node = new node_type(*mid, parent);
+            node = std::make_shared<node_type>(*mid, parent);
             size++;
             _build_node(node->left, begin, mid, size, node);
             _build_node(node->right, mid + 1, end, size, node);
@@ -96,15 +93,9 @@ namespace dst {
         }
 
 
-        void _delete_node(node_type *node) {
-            if (node != nullptr) {
-                _delete_node(node->left);
-                _delete_node(node->right);
-            }
-            delete node;
-        }
 
-        bool _node_contains(node_type *node, const value_type &value) {
+
+        bool _node_contains(node_ptr_type node, const value_type &value) {
             if (node == nullptr) {
                 return false;
             }
@@ -113,9 +104,9 @@ namespace dst {
                    _node_contains(node->right, value);
         }
 
-        void _insert_to_node(node_type *&node, const value_type &value, node_type *parent = nullptr) {
+        void _insert_to_node(node_ptr_type &node, const value_type &value, node_ptr_type parent = nullptr) {
             if (node == nullptr) {
-                node = new node_type(value, parent);
+                node = std::make_shared<node_type>(value, parent);
                 return;
             }
             if (value <= node->value) {
@@ -126,7 +117,7 @@ namespace dst {
 
         }
 
-        node_type *m_root;
+        node_ptr_type m_root;
         size_t m_size;
 
 
