@@ -18,7 +18,8 @@ namespace dst {
         ptr_type left, right;
         weak_ptr_type parent;
 
-        SimpleBSTNode(T value, ptr_type &parent) : value(value), left(nullptr), right(nullptr), parent(parent) {}
+        SimpleBSTNode(T value, ptr_type &parent, ptr_type left=nullptr, ptr_type right= nullptr) :
+                value(value), left(left), right(right), parent(parent) {}
     };
 }
 #endif //DATA_STRUCTURES_SIMPLE_BST_NODE_H

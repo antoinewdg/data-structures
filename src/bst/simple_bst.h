@@ -30,10 +30,37 @@ namespace dst {
 
         SimpleBST(std::vector<T> values) : SimpleBST(values.begin(), values.end()) {}
 
+        SimpleBST(const self_type &other) {
+            m_size = other.m_size;
+            _copy_node(other.m_root, m_root);
+        }
+
+        SimpleBST(self_type &&other) : m_root(std::move(other.m_root)), m_size(std::move(other.m_size)) {
+            other.clear();
+        }
+
+        self_type &operator=(const self_type &other) {
+            if (this != &other) {
+                m_size = other.m_size;
+                _copy_node(other.m_root, m_root);
+            }
+            return *this;
+        }
+
+        self_type &operator=(self_type &&other) {
+            if (this != &other) {
+                m_root = std::move(other.m_root);
+                m_size = std::move(other.m_size);
+                other.clear();
+            }
+
+            return *this;
+        }
+
         template<class RandomAccessIterator>
         SimpleBST(RandomAccessIterator begin, RandomAccessIterator end): SimpleBST() {
             std::sort(begin, end);
-            _build_node(m_root, begin, end, m_size);
+            _build_node(m_root, begin, end);
         }
 
 
@@ -65,6 +92,11 @@ namespace dst {
             }
         }
 
+        void clear() {
+            m_size = 0;
+            m_root = nullptr;
+        }
+
         size_t const size() {
             return m_size;
         }
@@ -87,17 +119,27 @@ namespace dst {
 
     private:
         template<class RandomAccessIterator>
-        static void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
-                                size_t &size, node_ptr_type parent = nullptr) {
+        void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
+                         node_ptr_type parent = nullptr) {
             if (begin == end) {
                 return;
             }
             RandomAccessIterator mid = begin + std::distance(begin, end) / 2;
             node = std::make_shared<node_type>(*mid, parent);
-            size++;
-            _build_node(node->left, begin, mid, size, node);
-            _build_node(node->right, mid + 1, end, size, node);
+            m_size++;
+            _build_node(node->left, begin, mid, node);
+            _build_node(node->right, mid + 1, end, node);
 
+        }
+
+        void _copy_node(node_ptr_type original, node_ptr_type &copy, node_ptr_type copy_parent = nullptr) {
+            if (original == nullptr) {
+                return;
+            }
+
+            copy = std::make_shared<node_type>(original->value, copy_parent);
+            _copy_node(original->left, copy->left, copy);
+            _copy_node(original->right, copy->right, copy);
         }
 
         static void _insert_to_node(node_ptr_type &node, const value_type &value, node_ptr_type parent = nullptr) {

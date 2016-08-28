@@ -105,3 +105,35 @@ TEST_CASE("SimpleBST size") {
     REQUIRE(b.size() == 3);
     REQUIRE(c.size() == 6);
 }
+
+TEST_CASE("SimpleBST copy functions") {
+    SimpleBST<int> bst = {-7, 1, 2, 4, 8}, copy_constructed(bst), copy_operated;
+    copy_operated = bst;
+    REQUIRE(copy_constructed == bst);
+    REQUIRE(copy_operated == bst);
+
+    bst = bst;
+    REQUIRE(bst == copy_constructed);
+}
+
+TEST_CASE("SimpleBST move functions") {
+    SimpleBST<int> original = {-7, 1, 2, 4, 8}, bst = {-7, 1, 2, 4, 8},
+            move_constructed(std::move(bst)), move_operated;
+
+    REQUIRE(move_constructed == original);
+    REQUIRE(bst.size() == 0);
+    REQUIRE(bst == SimpleBST<int>());
+
+    move_operated = std::move(move_constructed);
+    REQUIRE(move_operated == original);
+    REQUIRE(move_constructed.size() == 0);
+    REQUIRE(move_constructed == SimpleBST<int>());
+
+}
+
+TEST_CASE("SimpleBST clear") {
+    SimpleBST<std::string> bst = {"a", "b", "c"};
+    bst.clear();
+    REQUIRE(bst.size() == 0);
+    REQUIRE(bst == SimpleBST<std::string>());
+}
