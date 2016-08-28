@@ -28,22 +28,23 @@ namespace dst {
             return node;
         }
 
+        static node_ptr_type get_successor(node_ptr_type node) {
+            if (node->right != nullptr) {
+                return get_leftmost_child(node->right);
+            }
+
+            return _get_first_parent_from_left(node);
+        }
+
     private:
         friend class boost::iterator_core_access;
 
         void increment() {
-            if (m_node->right != nullptr) {
-                m_node = get_leftmost_child(m_node->right);
-                return;
-            }
-
-            m_node = _get_first_parent_from_left(m_node);
-
-
+            m_node = get_successor(m_node);
         }
 
 
-        node_ptr_type _get_first_parent_from_left(node_ptr_type node) {
+        static node_ptr_type _get_first_parent_from_left(node_ptr_type node) {
             node_ptr_type parent = node->parent.lock();
             while (parent != nullptr) {
                 if (parent->left == node) { return parent; }

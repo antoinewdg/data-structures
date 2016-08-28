@@ -57,6 +57,14 @@ namespace dst {
             _insert_to_node(m_root, value);
         }
 
+        void remove(const value_type &value) {
+            node_ptr_type node = _find_node_with_value(m_root, value);
+            if (node != nullptr) {
+                _remove_node(node);
+                m_size--;
+            }
+        }
+
         size_t const size() {
             return m_size;
         }
@@ -80,7 +88,7 @@ namespace dst {
     private:
         template<class RandomAccessIterator>
         static void _build_node(node_ptr_type &node, RandomAccessIterator begin, RandomAccessIterator end,
-                         size_t &size, node_ptr_type parent = nullptr) {
+                                size_t &size, node_ptr_type parent = nullptr) {
             if (begin == end) {
                 return;
             }
@@ -105,6 +113,23 @@ namespace dst {
 
         }
 
+        void _remove_node(node_ptr_type node) {
+
+            if (node->left != nullptr && node->right != nullptr) {
+                node_ptr_type successor = const_iterator::get_successor(node);
+                node->value = std::move(successor->value);
+                _remove_node(successor);
+                return;
+            }
+
+            node_ptr_type &ref_to_node = _get_pointer_from_parent(node);
+            if (node->left != nullptr) {
+                ref_to_node = node->left;
+            } else {
+                ref_to_node = node->right;
+            }
+        }
+
         static node_ptr_type _find_node_with_value(node_ptr_type node, const value_type &value) {
             if (node == nullptr) {
                 return nullptr;
@@ -115,6 +140,19 @@ namespace dst {
                 return _find_node_with_value(node->right, value);
             }
             return node;
+        }
+
+        node_ptr_type &_get_pointer_from_parent(node_ptr_type node) {
+            node_ptr_type parent = node->parent.lock();
+            if (!parent) {
+                return m_root;
+            }
+            if (parent->right == node) {
+                return parent->right;
+            } else {
+                return parent->left;
+            }
+
         }
 
         node_ptr_type m_root;

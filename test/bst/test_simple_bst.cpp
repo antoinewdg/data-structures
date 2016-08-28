@@ -53,8 +53,50 @@ TEST_CASE("SimpleBST insertion") {
     SimpleBST<int> bst;
     bst.insert(1);
     REQUIRE(bst == SimpleBST<int>({1}));
+    REQUIRE(bst.size() == 1);
     bst.insert(-4);
     REQUIRE(bst == SimpleBST<int>({-4, 1}));
+    REQUIRE(bst.size() == 2);
+}
+
+TEST_CASE("SimpleBST removal") {
+    SimpleBST<int> bst = {0, 1, 2, 3, 4, 5}, a = {0, 1, 2, 3, 4, 5},
+            b = {0, 1, 2, 4, 5}, c = {0, 2, 4, 5}, d = {2, 4, 5}, e = {2, 5},
+            f = {2}, g = {};
+
+    bst.remove(-4);
+    REQUIRE(bst == a);
+    REQUIRE(bst.size() == 6);
+
+    bst.remove(3);
+    REQUIRE(bst == b);
+    REQUIRE(bst.size() == 5);
+
+    bst.remove(1);
+    REQUIRE(bst == c);
+    REQUIRE(bst.size() == 4);
+
+    bst.remove(0);
+    REQUIRE(bst == d);
+    REQUIRE(bst.size() == 3);
+
+    bst.remove(4);
+    REQUIRE(bst == e);
+    REQUIRE(bst.size() == 2);
+
+    bst.remove(8547);
+    REQUIRE(bst == e);
+    REQUIRE(bst.size() == 2);
+
+    bst.remove(5);
+    REQUIRE(bst == f);
+    REQUIRE(bst.size() == 1);
+
+    bst.remove(2);
+    REQUIRE(bst == g);
+    REQUIRE(bst.size() == 0);
+
+
 }
 
 TEST_CASE("SimpleBST size") {
@@ -62,7 +104,4 @@ TEST_CASE("SimpleBST size") {
     REQUIRE(a.size() == 0);
     REQUIRE(b.size() == 3);
     REQUIRE(c.size() == 6);
-
-    a.insert(8);
-    REQUIRE(a.size() == 1);
 }
